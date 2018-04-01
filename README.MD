@@ -1,6 +1,6 @@
 # WTF WITH
 
-wtfwith is a module we were all waiting for!
+`wtfwith` is a module we were all waiting for!
 
 It checks your `package-lock.json` dependencies for repeated instances
 of modules.
@@ -11,9 +11,13 @@ Not required. Or `npm i -g wtfwith` if you really want.
 
 ## Usage
 
-1. `cd /your/project/dir`
-2. `npx wtfwith moduleName` or `npx npx github:jehy/wtfwith moduleName`
-3. Enjoy!
+1)Change to your project directory: `cd /your/project/dir`;
+
+2)Check that you have `package-lock.json` there;
+
+3)Run `npx wtfwith moduleName` or `npx wtfwith everything`!
+
+4)Enjoy!
 
 ## More options
 
