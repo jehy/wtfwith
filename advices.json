@@ -1,0 +1,21 @@
+{
+  "good": [
+    "I think you can add some XXX to your project.",
+    "May be add some more polyfills?",
+    "I think that you are low on dependencies."
+  ],
+  "bad": [
+    "Take a deep breath.",
+    "The only thing to do is to run shutdown 0.",
+    "Sometimes it is good to make a fresh start: rm ./ -rf && git commit -am 'nevermore' && git push origin master",
+    "When things go wrong, use babel. Everything is better with babel.",
+    "Why not make some origami?",
+    "Make a little task to your junior to remove this mess.",
+    "Now you know that god exists. You saw hell pretty close, yeah?",
+    "Throw out your worries and play some doom or heroes of might and magic",
+    "What about hiring a tech leader? I know a good one here: http://whois.jehy.ru/",
+    "You better watch some kittens: https://www.google.ru/search?q=kittens",
+    "You can always switch to brainfuck.",
+    "What about lunch?"
+  ]
+}
