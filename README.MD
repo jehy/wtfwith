@@ -12,7 +12,7 @@ Not required. Or `npm i -g wtf-with` if you really want.
 ## Usage
 
 1. `cd /your/project/dir`
-2. `npx wtf-with moduleName`
+2. `npx wtf-with moduleName` or `npx npx github:jehy/wtf-with moduleName`
 3. Enjoy!
 
 ## More options
@@ -20,4 +20,11 @@ Not required. Or `npm i -g wtf-with` if you really want.
 You can use any module name, or my favorite command:
 `npx wtf-with everything`!
 
-## Samples
+## Screenshots
+
+Checking for lodash:
+![lodash deps](screenshot-lodash.png)
+
+Checking all deps:
+
+![All deps](screenshot-everything.png)
