@@ -90,8 +90,10 @@ else {
 }
 let file;
 try {
-// eslint-disable-next-line global-require,import/no-dynamic-require
-  file = require(`${process.cwd()}/package-lock.json`);
+  const path = `${process.cwd()}/package-lock.json`;
+  console.log(colors.yellow(`Checking path ${path}`));
+  // eslint-disable-next-line global-require,import/no-dynamic-require
+  file = require(path);
 }
 catch (e) {
   console.log(colors.red(`Failed to read package-lock file:\n${e}`));
