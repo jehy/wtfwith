@@ -1,6 +1,6 @@
 {
   "name": "wtfwith",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -8,6 +8,10 @@
   },
   "bin": {
     "wtf-with": "index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jehy/wtfwith"
   },
   "author": "Jehy <npm@jehy.ru>",
   "license": "MIT",

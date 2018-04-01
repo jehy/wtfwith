@@ -1,30 +1,30 @@
 # WTF WITH
 
-wtf-with is a module we were all waiting for!
+wtfwith is a module we were all waiting for!
 
 It checks your `package-lock.json` dependencies for repeated instances
 of modules.
 
 ## Installation
 
-Not required. Or `npm i -g wtf-with` if you really want.
+Not required. Or `npm i -g wtfwith` if you really want.
 
 ## Usage
 
 1. `cd /your/project/dir`
-2. `npx wtf-with moduleName` or `npx npx github:jehy/wtf-with moduleName`
+2. `npx wtfwith moduleName` or `npx npx github:jehy/wtfwith moduleName`
 3. Enjoy!
 
 ## More options
 
 You can use any module name, or my favorite command:
-`npx wtf-with everything`!
+`npx wtfwith everything`!
 
 ## Screenshots
 
 Checking for lodash:
-![lodash deps](screenshot-lodash.png)
+![lodash deps](https://github.com/jehy/wtfwith/raw/master/screenshot-lodash.png)
 
 Checking all deps:
 
-![All deps](screenshot-everything.png)
+![All deps](https://github.com/jehy/wtfwith/raw/master/screenshot-everything.png)
