@@ -24,32 +24,33 @@ function getDeps(obj) {
     return [];
   }
   const directDeps = Object.keys(deps)
+    .filter(item => !item.dev)
     .map((item) => {
-      return {name: item, version: deps[item].version, dev: deps[item.dev]};
-    })
-    .filter(item => !item.dev);
+      return {name: item, version: deps[item].version};
+    });
   const childDeps = Object.keys(deps)
+    .filter(item => !deps[item].dev)
   // eslint-disable-next-line no-use-before-define
-    .map(item => getAll(deps[item]))
+    .map(item => getAll(deps[item], `${item}@${deps[item].version}`))
     .reduce((res, item) => {
       return res.concat(item);
     }, []);
   return directDeps.concat(childDeps);
 }
 
-function getRequires(obj) {
+function getRequires(obj, parentName) {
   const deps = obj.requires;
   if (!deps || !Object.keys(deps).length) {
     return [];
   }
   return Object.keys(deps)
     .map((item) => {
-      return {name: item, version: deps[item]};
+      return {name: item, version: deps[item], parent: parentName};
     });
 }
 
-function getAll(obj) {
-  return getDeps(obj).concat(getRequires(obj));
+function getAll(obj, item = 'main') {
+  return getDeps(obj).concat(getRequires(obj, item));
 }
 
 function getUniqueDeps(all) {
@@ -63,18 +64,29 @@ function getUniqueDeps(all) {
     else if (!res[searchName].versions.includes(version)) {
       res[searchName].versions.push(version);
     }
+    if (!item.parent) {
+      return res;
+    }
+    res[searchName].parents = res[searchName].parents || {};
+    res[searchName].parents[version] = res[searchName].parents[version] || [];
+    res[searchName].parents[version].push(item.parent);
+
     return res;
   }, {});
 }
 
-function showAdvice(arg, good = true) {
+function showAdvice(worst, good = true) {
   const currAdvices = good && advices.good || advices.bad;
   const randHex = crypto.randomBytes(4)
     .toString('hex');
   const randIndex = parseInt(randHex, 16) % (currAdvices.length - 1);
   let advice = currAdvices[randIndex];
-  if (arg && arg !== 'everything') {
-    advice = advice.replace('XXX', arg);
+  if (worst && worst !== 'everything') {
+    advice = advice.replace('XXX', worst);
+  }
+  else
+  {
+    advice = advice.replace('XXX', 'deps');
   }
   console.log(colors.magenta(`Advice: ${advice}`));
 }
@@ -114,7 +126,19 @@ if (worst.length !== 0) {
   worst
     .forEach((itemName) => {
       const item = unique[itemName];
-      console.log(`\n${item.versions.length} versions of ${itemName}:\n - ${item.versions.sort().join('\n - ')}`);
+      const versions = `${item.versions
+        .sort()
+        .map(((version) => {
+          if (unique[itemName].parents && unique[itemName].parents[version]) {
+            const parents = unique[itemName].parents[version]
+              .filter((value, index, self) => self.indexOf(value) === index)
+              .join(', ');
+            return `${colors.bgBlue(version)} from ${parents}`;
+          }
+          return colors.bgBlue(version);
+        }))
+        .join('\n - ')}`;
+      console.log(`\n${item.versions.length} versions of ${itemName}:\n - ${versions}`);
     });
   console.log('');
   showAdvice(worst[0], false);
