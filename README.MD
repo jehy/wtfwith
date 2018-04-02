@@ -6,18 +6,17 @@
 
 `wtfwith` is a module we were all waiting for!
 
-It checks your `package-lock.json` dependencies for repeated instances
-of modules.
+It checks your `package-lock.json` dependencies for repeated dependencies with different versions.
 
 ## Installation
 
-Not required. Or `npm i -g wtfwith` if you really want.
+Not required. Or run `npm i -g wtfwith` if you really want.
 
 ## Usage
 
 1)Change to your project directory: `cd /your/project/dir`;
 
-2)Check that you have `package-lock.json` there;
+2)Check that you have `package-lock.json` there (or `run npm i`);
 
 3)Run `npx wtfwith moduleName` or `npx wtfwith everything`!
 
@@ -28,11 +27,6 @@ Not required. Or `npm i -g wtfwith` if you really want.
 You can use any module name, or my favorite command:
 `npx wtfwith everything`!
 
-## Screenshots
+## Live example
 
-Checking for lodash:
-![lodash deps](https://github.com/jehy/wtfwith/raw/master/screenshot-lodash.png)
-
-Checking all deps:
-
-![All deps](https://github.com/jehy/wtfwith/raw/master/screenshot-everything.png)
+![live](https://github.com/jehy/wtfwith/raw/master/tty.gif)
