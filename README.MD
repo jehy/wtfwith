@@ -6,7 +6,7 @@
 
 `wtfwith` is a module we were all waiting for!
 
-It checks your `package-lock.json` dependencies for repeated dependencies with different versions.
+It checks your `package-lock.json` for repeated dependencies with different versions.
 
 ## Installation
 
