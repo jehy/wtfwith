@@ -7,10 +7,11 @@
 const colors = require('colors/safe');
 const advices = require('./advices');
 const crypto = require('crypto');
+const semver = require('semver');
 
 // detect packages which are broken to damn pieces
 function getBaseName(pkg) {
-  const baseNames = ['lodash', 'undescore'];
+  const baseNames = ['lodash', 'underscore'];
   const baseName = baseNames.find(item => pkg.includes(item));
   if (baseName) {
     return baseName;
@@ -18,42 +19,49 @@ function getBaseName(pkg) {
   return false;
 }
 
-function getDeps(obj) {
+function getDeps(obj, parent, options) {
   const deps = obj.dependencies;
   if (!deps || !Object.keys(deps).length) {
     return [];
   }
-  const directDeps = Object.keys(deps)
-    .filter(item => !item.dev)
-    .map((item) => {
-      return {name: item, version: deps[item].version};
-    });
-  const childDeps = Object.keys(deps)
-    .filter(item => !deps[item].dev)
+  let directDeps = Object.keys(deps);
+  if (!options.showDev) {
+    directDeps = directDeps.filter(item => !deps[item].dev);
+  }
+  const directDepsItems = directDeps.map((item) => {
+    return {name: item, version: deps[item].version, parent};
+  });
+  let childDeps = Object.keys(deps);
+  if (!options.showDev) {
+    childDeps = childDeps.filter(item => !deps[item].dev);
+  }
   // eslint-disable-next-line no-use-before-define
-    .map(item => getAll(deps[item], `${item}@${deps[item].version}`))
+  childDeps = childDeps.map(item => getAll(deps[item], {name: item, version: deps[item].version}, options))
     .reduce((res, item) => {
       return res.concat(item);
     }, []);
-  return directDeps.concat(childDeps);
+  return directDepsItems.concat(childDeps);
 }
 
-function getRequires(obj, parentName) {
+function getRequires(obj, parent, options) {
+  if (obj.dev && !options.showDev) {
+    return [];
+  }
   const deps = obj.requires;
   if (!deps || !Object.keys(deps).length) {
     return [];
   }
   return Object.keys(deps)
     .map((item) => {
-      return {name: item, version: deps[item], parent: parentName};
+      return {name: item, version: deps[item], parent};
     });
 }
 
-function getAll(obj, item = 'main') {
-  return getDeps(obj).concat(getRequires(obj, item));
+function getAll(obj, parent, options) {
+  return getDeps(obj, parent, options).concat(getRequires(obj, parent, options));
 }
 
-function getUniqueDeps(all) {
+function getUniqueDeps(all, directDeps) {
   return all.reduce((res, item) => {
 
     const searchName = getBaseName(item.name) || item.name;
@@ -64,12 +72,17 @@ function getUniqueDeps(all) {
     else if (!res[searchName].versions.includes(version)) {
       res[searchName].versions.push(version);
     }
-    if (!item.parent) {
-      return res;
-    }
     res[searchName].parents = res[searchName].parents || {};
     res[searchName].parents[version] = res[searchName].parents[version] || [];
-    res[searchName].parents[version].push(item.parent);
+    if (item.parent.name === 'root') {
+      if (!directDeps[item.name] || !semver.satisfies(item.version, directDeps[item.name])) {
+        return res;
+      }
+      res[searchName].parents[version].push(`${item.parent.name}`);
+    }
+    else {
+      res[searchName].parents[version].push(`${item.parent.name}@${item.parent.version}`);
+    }
 
     return res;
   }, {});
@@ -84,44 +97,65 @@ function showAdvice(worst, good = true) {
   if (worst && worst !== 'everything') {
     advice = advice.replace('XXX', worst);
   }
-  else
-  {
+  else {
     advice = advice.replace('XXX', 'deps');
   }
   console.log(colors.magenta(`Advice: ${advice}`));
 }
 
-let arg = process.argv[2];
+function init() {
+  let arg = process.argv[2];
+  if (arg && arg.includes('--')) {
+    arg = 'everything';
+  }
+  const showDev = process.argv.some(item => item === '--dev');
+  if (arg !== 'everything' && arg) {
+    console.log(colors.yellow(`Searching for ${arg}`));
+  }
+  else {
+    arg = 'everything';
+    console.log(colors.yellow('Searching all strange things...'));
+  }
+  let lockFile;
+  try {
+    const path = `${process.cwd()}/package-lock.json`;
+    console.log(colors.yellow(`Checking path ${path}`));
+    // eslint-disable-next-line global-require,import/no-dynamic-require
+    lockFile = require(path);
+  }
+  catch (e) {
+    console.log(colors.red(`Failed to read package-lock file:\n${e}`));
+    process.exit(0);
+  }
 
-if (arg !== 'everything' && arg) {
-  console.log(colors.yellow(`Searching for ${arg}`));
-}
-else {
-  arg = 'everything';
-  console.log(colors.yellow('Searching all strange things...'));
-}
-let file;
-try {
-  const path = `${process.cwd()}/package-lock.json`;
-  console.log(colors.yellow(`Checking path ${path}`));
-  // eslint-disable-next-line global-require,import/no-dynamic-require
-  file = require(path);
-}
-catch (e) {
-  console.log(colors.red(`Failed to read package-lock file:\n${e}`));
-  process.exit(0);
+  let directDeps;
+  try {
+    const path = `${process.cwd()}/package.json`;
+    // eslint-disable-next-line global-require,import/no-dynamic-require
+    directDeps = require(path).dependencies || {};
+  }
+  catch (e) {
+    console.log(colors.red(`Failed to read package file:\n${e}`));
+    process.exit(0);
+  }
+  const options = {arg, showDev};
+  return {lockFile, directDeps, options};
 }
 
-const all = getAll(file);
-const unique = getUniqueDeps(all);
-let worst = Object.keys(unique)
-  .filter(item => unique[item].versions.length > 2)
-  .sort((a, b) => unique[b].versions.length - unique[a].versions.length);
-if (arg !== 'everything') {
-  worst = worst
-    .filter(itemName => itemName.includes(arg));
+function processData(lockFile, directDeps, options) {
+  const all = getAll(lockFile, {name: 'root'}, options);
+  const unique = getUniqueDeps(all, directDeps);
+  let worst = Object.keys(unique)
+    .filter(item => unique[item].versions.length > 2)
+    .sort((a, b) => unique[b].versions.length - unique[a].versions.length);
+  if (options.arg !== 'everything') {
+    worst = worst
+      .filter(itemName => itemName.includes(options.arg));
+  }
+  return {worst, unique};
 }
-if (worst.length !== 0) {
+
+function output(worst, unique) {
   console.log(colors.red('Huston, we have a problem:'));
   worst
     .forEach((itemName) => {
@@ -132,6 +166,12 @@ if (worst.length !== 0) {
           if (unique[itemName].parents && unique[itemName].parents[version]) {
             const parents = unique[itemName].parents[version]
               .filter((value, index, self) => self.indexOf(value) === index)
+              .map((parentName) => {
+                if (parentName === 'root') {
+                  return colors.green(parentName);
+                }
+                return parentName;
+              })
               .join(', ');
             return `${colors.bgBlue(version)} from ${parents}`;
           }
@@ -143,7 +183,7 @@ if (worst.length !== 0) {
   console.log('');
   showAdvice(worst[0], false);
 }
-else {
-  console.log(colors.green('You are okay... For now'));
-  showAdvice(arg);
-}
+
+const {lockFile, directDeps, options} = init();
+const {worst, unique} = processData(lockFile, directDeps, options);
+output(worst, unique);

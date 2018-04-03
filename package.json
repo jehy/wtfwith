@@ -1,6 +1,6 @@
 {
   "name": "wtfwith",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "Check your lock file for repeated dependencies with different versions",
   "keywords": [
     "npx",
@@ -25,7 +25,8 @@
   },
   "license": "MIT",
   "dependencies": {
-    "colors": "1.2.1"
+    "colors": "1.2.1",
+    "semver": "5.5.0"
   },
   "devDependencies": {
     "eslint": "4.19.1",
