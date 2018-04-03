@@ -27,6 +27,8 @@ Not required. Or run `npm i -g wtfwith` if you really want.
 You can use any module name, or my favorite command:
 `npx wtfwith everything`!
 
+You can also add `--dev` option to include dev dependencies check.
+
 ## Live example
 
 ![live](https://github.com/jehy/wtfwith/raw/master/tty.gif)
