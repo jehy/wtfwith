@@ -136,7 +136,7 @@ function init() {
     // eslint-disable-next-line global-require,import/no-dynamic-require
     deps.direct = require(path).dependencies || {};
     // eslint-disable-next-line global-require,import/no-dynamic-require
-    deps.bundle = require(path).bundleDependencies || {};
+    deps.bundle = require(path).bundleDependencies || [];
   }
   catch (e) {
     console.log(colors.red(`Failed to read package file:\n${e}`));
