@@ -61,7 +61,7 @@ function getAll(obj, parent, options) {
   return getDeps(obj, parent, options).concat(getRequires(obj, parent, options));
 }
 
-function getUniqueDeps(all, directDeps) {
+function getUniqueDeps(all, deps) {
   return all.reduce((res, item) => {
 
     const searchName = getBaseName(item.name) || item.name;
@@ -75,7 +75,9 @@ function getUniqueDeps(all, directDeps) {
     res[searchName].parents = res[searchName].parents || {};
     res[searchName].parents[version] = res[searchName].parents[version] || [];
     if (item.parent.name === 'root') {
-      if (!directDeps[item.name] || !semver.satisfies(item.version, directDeps[item.name])) {
+      const isDirect = deps.direct[item.name] && !semver.satisfies(item.version, deps.direct[item.name]);
+      const isBundle = deps.bundle.includes(item.name);
+      if (!isBundle && !isDirect) {
         return res;
       }
       res[searchName].parents[version].push(`${item.parent.name}`);
@@ -128,23 +130,25 @@ function init() {
     process.exit(0);
   }
 
-  let directDeps;
+  const deps = {};
   try {
     const path = `${process.cwd()}/package.json`;
     // eslint-disable-next-line global-require,import/no-dynamic-require
-    directDeps = require(path).dependencies || {};
+    deps.direct = require(path).dependencies || {};
+    // eslint-disable-next-line global-require,import/no-dynamic-require
+    deps.bundle = require(path).bundleDependencies || {};
   }
   catch (e) {
     console.log(colors.red(`Failed to read package file:\n${e}`));
     process.exit(0);
   }
   const options = {arg, showDev};
-  return {lockFile, directDeps, options};
+  return {lockFile, deps, options};
 }
 
-function processData(lockFile, directDeps, options) {
+function processData(lockFile, deps, options) {
   const all = getAll(lockFile, {name: 'root'}, options);
-  const unique = getUniqueDeps(all, directDeps);
+  const unique = getUniqueDeps(all, deps);
   let worst = Object.keys(unique)
     .filter(item => unique[item].versions.length > 2)
     .sort((a, b) => unique[b].versions.length - unique[a].versions.length);
@@ -189,6 +193,6 @@ function output(worst, unique, options) {
   showAdvice(worst[0], false);
 }
 
-const {lockFile, directDeps, options} = init();
-const {worst, unique} = processData(lockFile, directDeps, options);
+const {lockFile, deps, options} = init();
+const {worst, unique} = processData(lockFile, deps, options);
 output(worst, unique, options);
