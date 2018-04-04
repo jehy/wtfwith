@@ -92,7 +92,7 @@ function showAdvice(worst, good = true) {
   const currAdvices = good && advices.good || advices.bad;
   const randHex = crypto.randomBytes(4)
     .toString('hex');
-  const randIndex = parseInt(randHex, 16) % (currAdvices.length - 1);
+  const randIndex = parseInt(randHex, 16) % (currAdvices.length);
   let advice = currAdvices[randIndex];
   if (worst && worst !== 'everything') {
     advice = advice.replace('XXX', worst);
@@ -155,7 +155,12 @@ function processData(lockFile, directDeps, options) {
   return {worst, unique};
 }
 
-function output(worst, unique) {
+function output(worst, unique, options) {
+  if (!worst.length) {
+    console.log(colors.green('You are okay... for now'));
+    showAdvice(options.arg, true);
+    process.exit(0);
+  }
   console.log(colors.red('Huston, we have a problem:'));
   worst
     .forEach((itemName) => {
@@ -186,4 +191,4 @@ function output(worst, unique) {
 
 const {lockFile, directDeps, options} = init();
 const {worst, unique} = processData(lockFile, directDeps, options);
-output(worst, unique);
+output(worst, unique, options);

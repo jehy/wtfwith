@@ -2,9 +2,12 @@
   "good": [
     "I think you can add some XXX to your project.",
     "May be add some more polyfills?",
-    "I think that you are low on dependencies."
+    "I think that you are low on dependencies.",
+    "Hey, add more dependencies, people won't take you seriously!"
   ],
   "bad": [
+    "I think it is pretty enough of XXX.",
+    "I see, you're a big fan of XXX, yeah?",
     "Take a deep breath.",
     "The only thing to do is to run shutdown 0.",
     "Sometimes it is good to make a fresh start: rm ./ -rf && git commit -am 'nevermore' && git push origin master",
