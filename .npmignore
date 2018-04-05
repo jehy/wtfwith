@@ -1,4 +1,5 @@
 node_modules
+package-lock.json
 logs
 npm-debug.log
 v8.log
@@ -15,3 +16,4 @@ err_reports
 config/runtime.json
 test-results.xml
 dist
+tty.gif
