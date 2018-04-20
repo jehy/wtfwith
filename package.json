@@ -1,6 +1,6 @@
 {
   "name": "wtfwith",
-  "version": "1.0.14",
+  "version": "1.0.15",
   "description": "Check your lock file for repeated dependencies with different versions",
   "keywords": [
     "npx",

@@ -74,9 +74,9 @@ function getUniqueDeps(all, deps, options) {
     res[searchName].parents = res[searchName].parents || {};
     res[searchName].parents[version] = res[searchName].parents[version] || [];
     if (item.parent.name === rootPackageName) {
-      const isDirect = deps.direct[item.name] && !semver.satisfies(item.version, deps.direct[item.name]);
+      const isDirect = deps.direct[item.name] && semver.satisfies(item.version, deps.direct[item.name]);
       const isBundle = deps.bundle.includes(item.name);
-      const isDev = deps.dev[item.name] && !semver.satisfies(item.version, deps.dev[item.name]);
+      const isDev = deps.dev[item.name] && semver.satisfies(item.version, deps.dev[item.name]);
       if (!isBundle && !isDirect && !(options.showDev && isDev)) {
         return res;
       }
