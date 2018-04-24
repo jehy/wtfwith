@@ -1,6 +1,6 @@
 {
   "name": "wtfwith",
-  "version": "1.0.15",
+  "version": "1.0.16",
   "description": "Check your lock file for repeated dependencies with different versions",
   "keywords": [
     "npx",
@@ -29,6 +29,7 @@
   "license": "MIT",
   "dependencies": {
     "colors": "1.2.1",
+    "commander": "2.15.1",
     "semver": "5.5.0"
   },
   "devDependencies": {

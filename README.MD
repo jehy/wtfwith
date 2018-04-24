@@ -24,10 +24,12 @@ Not required. Or run `npm i -g wtfwith` if you really want.
 
 ## More options
 
-You can use any module name, or my favorite command:
+* You can use any module name, or my favorite command:
 `npx wtfwith everything`!
 
-You can also add `--dev` option to include dev dependencies check.
+* Use `--dev` option to include dev dependencies check.
+
+* Use `--min x` option to check for more then `x` duplicates of dependencies.
 
 ## Live example
 

@@ -8,6 +8,7 @@ const crypto = require('crypto');
 const semver = require('semver');
 
 const rootPackageName = 'root';
+const minSearchDefault = 3;
 
 // detect packages which are broken to damn pieces
 function getBaseName(pkg) {
@@ -107,12 +108,9 @@ function showAdvice(worst, good = true) {
 
 
 /* istanbul ignore next */
-function init() {
-  let arg = process.argv[2];
-  if (arg && arg.includes('--')) {
-    arg = 'everything';
-  }
-  const showDev = process.argv.some(item => item === '--dev');
+function init(opts = {}) {
+  let arg = opts.searchFor;
+  const showDev = opts.dev;
   if (arg !== 'everything' && arg) {
     console.log(colors.yellow(`Searching for ${arg}`));
   }
@@ -120,6 +118,7 @@ function init() {
     arg = 'everything';
     console.log(colors.yellow('Searching all strange things...'));
   }
+  const minSearch = opts.min || minSearchDefault;
   let lockFile;
   try {
     const path = `${process.cwd()}/package-lock.json`;
@@ -145,15 +144,18 @@ function init() {
     console.log(colors.red(`Failed to read package file:\n${e}`));
     process.exit(0);
   }
-  const options = {arg, showDev};
+  const options = {arg, showDev, minSearch};
   return {lockFile, deps, options};
 }
 
 function processData(lockFile, deps, options) {
   const all = getAll(lockFile, {name: rootPackageName}, options);
   const unique = getUniqueDeps(all, deps, options);
+  if (!options.minSearch) {
+    options.minSearch = minSearchDefault;
+  }
   let worst = Object.keys(unique)
-    .filter(item => unique[item].versions.length > 2)
+    .filter(item => unique[item].versions.length >= options.minSearch)
     .sort((a, b) => unique[b].versions.length - unique[a].versions.length);
   if (options.arg !== 'everything') {
     worst = worst
