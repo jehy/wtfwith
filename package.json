@@ -1,6 +1,6 @@
 {
   "name": "wtfwith",
-  "version": "1.0.16",
+  "version": "1.0.17",
   "description": "Check your lock file for repeated dependencies with different versions",
   "keywords": [
     "npx",
@@ -14,7 +14,7 @@
     "lint": "./node_modules/.bin/eslint index.js lib.js test"
   },
   "bin": {
-    "wtf-with": "index.js"
+    "wtfwith": "index.js"
   },
   "repository": {
     "type": "git",
