@@ -22,7 +22,7 @@ describe('Test with npm package file', () => {
     };
   });
 
-  it('should correctly parse prod  deps with no args', () => {
+  it('should correctly parse prod  deps with arg everything', () => {
     const options = {arg: 'everything'};
     const {worst} = funcs.processData(testPackageLock, deps, options);
     assert.deepEqual(worst, ['lodash', 'mississippi', 'pump']);
@@ -49,6 +49,20 @@ describe('Test with npm package file', () => {
     const options = {arg: 'lodash', showDev: true};
     const {worst} = funcs.processData(testPackageLock, deps, options);
     assert.deepEqual(worst, ['lodash']);
+  });
+
+
+  it('should correctly parse prod deps with arg "min"', () => {
+    const options = {arg: 'everything', minSearch: 4};
+    const {worst} = funcs.processData(testPackageLock, deps, options);
+    assert.deepEqual(worst, ['lodash']);
+  });
+
+
+  it('should correctly parse dev deps with arg "min"', () => {
+    const options = {arg: 'everything', showDev: true, minSearch: 4};
+    const {worst} = funcs.processData(testPackageLock, deps, options);
+    assert.deepEqual(worst, ['lodash', 'semver', 'yargs']);
   });
 
 });

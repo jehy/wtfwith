@@ -6,6 +6,7 @@ const colors = require('colors/safe');
 const advices = require('./advices');
 const crypto = require('crypto');
 const semver = require('semver');
+const debug = require('debug')('wtfwith');
 
 const rootPackageName = 'root';
 const minSearchDefault = 3;
@@ -106,19 +107,26 @@ function showAdvice(worst, good = true) {
   console.log(colors.magenta(`Advice: ${advice}`));
 }
 
-
 /* istanbul ignore next */
 function init(opts = {}) {
-  let arg = opts.searchFor;
+  debug(`commander parse result: ${JSON.stringify(opts, null, 3)}`);
+  // debug(`commander opts events: ${JSON.stringify(opts.args)}`);
+
+  let arg = opts.args[0];
+  if (!arg || arg.includes('--')) {
+    arg = 'everything';
+  }
+
   const showDev = opts.dev;
+  let minSearch = opts.min || minSearchDefault;
   if (arg !== 'everything' && arg) {
     console.log(colors.yellow(`Searching for ${arg}`));
+    minSearch = 1;
   }
   else {
     arg = 'everything';
-    console.log(colors.yellow('Searching all strange things...'));
+    console.log(colors.yellow(`Searching modules which occure more then ${minSearch} times`));
   }
-  const minSearch = opts.min || minSearchDefault;
   let lockFile;
   try {
     const path = `${process.cwd()}/package-lock.json`;
@@ -145,6 +153,7 @@ function init(opts = {}) {
     process.exit(0);
   }
   const options = {arg, showDev, minSearch};
+  debug(`Init options: ${JSON.stringify(options)}`);
   return {lockFile, deps, options};
 }
 
@@ -164,15 +173,8 @@ function processData(lockFile, deps, options) {
   return {worst, unique};
 }
 
-/* istanbul ignore next */
-function output(worst, unique, options) {
-  if (!worst.length) {
-    console.log(colors.green('You are okay... for now'));
-    showAdvice(options.arg, true);
-    process.exit(0);
-  }
-  console.log(colors.red('Huston, we have a problem:'));
-  worst
+function printModulesInfo(modules, unique) {
+  modules
     .forEach((itemName) => {
       const item = unique[itemName];
       const versions = `${item.versions
@@ -196,7 +198,21 @@ function output(worst, unique, options) {
       console.log(`\n${item.versions.length} versions of ${itemName}:\n - ${versions}`);
     });
   console.log('');
-  showAdvice(worst[0], false);
+}
+
+/* istanbul ignore next */
+function output(modules, unique, options) {
+  if (!modules.length) {
+    console.log(colors.green('You are okay... for now'));
+    if (options.arg !== 'everything') {
+      printModulesInfo(modules, unique);
+    }
+    showAdvice(options.arg, true);
+    process.exit(0);
+  }
+  console.log(colors.red('Huston, we have a problem:'));
+  printModulesInfo(modules, unique);
+  showAdvice(modules[0], false);
 }
 
 module.exports = {
