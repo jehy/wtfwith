@@ -3,6 +3,7 @@
 [![Build Status](https://travis-ci.org/jehy/wtfwith.svg?branch=master)](https://travis-ci.org/jehy/wtfwith)
 [![dependencies Status](https://david-dm.org/jehy/wtfwith/status.svg)](https://david-dm.org/jehy/wtfwith)
 [![devDependencies Status](https://david-dm.org/jehy/wtfwith/dev-status.svg)](https://david-dm.org/jehy/wtfwith?type=dev)
+[![Known Vulnerabilities](https://snyk.io/test/github/jehy/wtfwith/badge.svg)](https://snyk.io/test/github/jehy/wtfwith)
 
 `wtfwith` is a module we were all waiting for!
 
