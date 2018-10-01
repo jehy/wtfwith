@@ -1,6 +1,6 @@
 {
   "name": "wtfwith",
-  "version": "1.0.19",
+  "version": "1.1.0",
   "description": "Check your lock file for repeated dependencies with different versions",
   "keywords": [
     "npx",
@@ -10,7 +10,9 @@
   "scripts": {
     "test": "mocha --exit",
     "cover": "nyc mocha -t 10000 --exit",
-    "check-coverage": "nyc check-coverage --lines 40 --functions 40 --branches 10",
+    "check_coverage": "nyc check-coverage --lines 70 --functions 70 --branches 70",
+    "coverage": "nyc npm test",
+    "coveralls": "nyc report --reporter=text-lcov | coveralls",
     "lint": "./node_modules/.bin/eslint index.js lib.js test"
   },
   "bin": {
@@ -34,8 +36,9 @@
     "semver": "5.5.1"
   },
   "devDependencies": {
-    "chai": "^4.1.2",
-    "eslint": "^5.5.0",
+    "chai": "^4.2.0",
+    "coveralls": "^3.0.2",
+    "eslint": "^5.6.1",
     "eslint-config-airbnb-base": "^13.1.0",
     "eslint-plugin-import": "^2.14.0",
     "eslint-plugin-promise": "^4.0.1",
