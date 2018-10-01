@@ -2,8 +2,8 @@
 
 'use strict';
 
-const {init, processData, output} = require('./lib.js');
 const program = require('commander');
+const {init, processData, output} = require('./lib.js');
 
 let moduleArg;
 program
