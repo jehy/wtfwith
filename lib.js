@@ -187,9 +187,9 @@ function processData(lockFile, deps, options) {
   return {worst, unique};
 }
 
-function getModulesInfo(modules, unique) {
+function getModulesInfo(worst, unique) {
   const res = [];
-  modules
+  worst
     .forEach((itemName) => {
       const item = unique[itemName];
       const versions = `${item.versions
@@ -218,23 +218,23 @@ function getModulesInfo(modules, unique) {
 
 
 /* istanbul ignore next */
-function printModulesInfo(modules, unique) {
-  console.log(getModulesInfo(modules, unique).join('\n'));
+function printModulesInfo(worst, unique) {
+  console.log(getModulesInfo(worst, unique).join('\n'));
 }
 
 /* istanbul ignore next */
-function output(modules, unique, options) {
-  if (!modules.length) {
+function output(worst, unique, options) {
+  if (!worst.length) {
     console.log(colors.green('You are okay... for now'));
     if (options.arg !== 'everything') {
-      printModulesInfo(modules, unique);
+      printModulesInfo(worst, unique);
     }
     showAdvice(options.arg, true);
     process.exit(0);
   }
   console.log(colors.red('Huston, we have a problem:'));
-  printModulesInfo(modules, unique);
-  showAdvice(modules[0], false);
+  printModulesInfo(worst, unique);
+  showAdvice(worst[0], false);
 }
 
 module.exports = {

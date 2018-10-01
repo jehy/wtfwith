@@ -5,7 +5,6 @@
 
 const {assert} = require('chai');
 const funcs = require('../lib');
-const unique = require('./unique.json');
 
 describe('Test with npm package file', () => {
 
@@ -75,25 +74,32 @@ describe('Test with npm package file', () => {
   });
 
   it('should be able to show modules info as text', () => {
-    const modules = ['bignumber.js', 'engine.io', 'engine.io-client',
-      'engine.io-parser', 'ipaddr.js', 'arraybuffer.slice', 'object.defaults',
-      'object.map', 'object.pick', 'passport.socketio', 'socket.io',
-      'socket.io-adapter', 'socket.io-client', 'socket.io-parser'];
-    const res = funcs.getModulesInfo(modules, unique);
-    const expected = ['\n1 versions of bignumber.js:\n - \u001b[44m4.1.0\u001b[49m from mysql@2.16.0',
-      '\n1 versions of engine.io:\n - \u001b[44m3.2.0\u001b[49m from socket.io@2.1.1',
-      '\n1 versions of engine.io-client:\n - \u001b[44m3.2.1\u001b[49m from socket.io-client@2.1.1',
-      '\n1 versions of engine.io-parser:\n - \u001b[44m2.1.2\u001b[49m from engine.io@3.2.0, engine.io-client@3.2.1',
-      '\n1 versions of ipaddr.js:\n - \u001b[44m1.6.0\u001b[49m from proxy-addr@2.0.3',
-      '\n1 versions of arraybuffer.slice:\n - \u001b[44m0.0.7\u001b[49m from engine.io-parser@2.1.2',
-      '\n1 versions of object.defaults:\n - \u001b[44m1.1.0\u001b[49m from fined@1.1.0',
-      '\n1 versions of object.map:\n - \u001b[44m1.0.1\u001b[49m from liftoff@2.5.0',
-      '\n1 versions of object.pick:\n - \u001b[44m1.3.0\u001b[49m from fined@1.1.0, micromatch@3.1.10, nanomatch@1.2.13',
-      '\n1 versions of passport.socketio:\n - \u001b[44m3.7.0\u001b[49m from \u001b[32mroot\u001b[39m',
-      '\n1 versions of socket.io:\n - \u001b[44m2.1.1\u001b[49m from \u001b[32mroot\u001b[39m',
-      '\n1 versions of socket.io-adapter:\n - \u001b[44m1.1.1\u001b[49m from socket.io@2.1.1',
-      '\n1 versions of socket.io-client:\n - \u001b[44m2.1.1\u001b[49m from socket.io@2.1.1',
-      '\n1 versions of socket.io-parser:\n - \u001b[44m3.2.0\u001b[49m from socket.io@2.1.1, socket.io-client@2.1.1', ''];
+    const options = {arg: 'everything', showDev: true, minSearch: 4};
+    const {worst, unique} = funcs.processData(testPackageLock, deps, options);
+    const res = funcs.getModulesInfo(worst, unique);
+    const expected = [
+      '\n15 versions of lodash:\n - \u001b[44m3.10.1\u001b[49m from cli-table2@0.2.0'
+      + '\n - \u001b[44m4.17.4\u001b[49m from eslint@2.2.0, inquirer@0.12.0, table@3.8.3, nyc@11.4.1, babel-generator@6.26.0,'
+      + ' babel-template@6.26.0, babel-traverse@6.26.0, babel-types@6.26.0\n - \u001b[44mlodash._baseindexof:3.1.0\u001b[49m from'
+      + ' \u001b[32mroot\u001b[39m\n - \u001b[44mlodash._baseuniq:4.6.0\u001b[49m from \u001b[32mroot\u001b[39m\n'
+      + ' - \u001b[44mlodash._bindcallback:3.0.1\u001b[49m '
+      + 'from \u001b[32mroot\u001b[39m\n - \u001b[44mlodash._cacheindexof:3.0.2\u001b[49m from'
+      + ' \u001b[32mroot\u001b[39m\n - \u001b[44mlodash._createcache:3.1.2\u001b[49m from \u001b[32mroot\u001b[39m\n'
+      + ' - \u001b[44mlodash._createset:4.0.3\u001b[49m from lodash._baseuniq@4.6.0\n - \u001b[44mlodash._getnative:3.9.1\u001b[49m from'
+      + ' \u001b[32mroot\u001b[39m, lodash._createcache@3.1.2\n - \u001b[44mlodash._root:3.0.1\u001b[49m from lodash._baseuniq@4.6.0\n'
+      + ' - \u001b[44mlodash.clonedeep:4.5.0\u001b[49m from \u001b[32mroot\u001b[39m\n - \u001b[44mlodash.restparam:3.6.1\u001b[49m from'
+      + ' \u001b[32mroot\u001b[39m\n - \u001b[44mlodash.union:4.6.0\u001b[49m from'
+      + ' \u001b[32mroot\u001b[39m\n - \u001b[44mlodash.uniq:4.5.0\u001b[49m from'
+      + ' \u001b[32mroot\u001b[39m\n - \u001b[44mlodash.without:4.4.0\u001b[49m from \u001b[32mroot\u001b[39m',
+      '\n4 versions of semver:\n - \u001b[44m4.3.6\u001b[49m from npm-registry-couchapp@2.7.1\n - \u001b[44m5.3.0\u001b[49m from'
+      + ' node-gyp@3.6.2\n - \u001b[44m5.4.1\u001b[49m from nyc@11.4.1, istanbul-lib-instrument@1.9.1, normalize-package-data@2.4.0\n'
+      + ' - \u001b[44m5.5.0\u001b[49m from \u001b[32mroot\u001b[39m, init-package-json@1.10.3, npm-package-arg@5.1.2, lock-verify@2.0.0,'
+      + ' normalize-package-data@2.4.0, npm-install-checks@3.0.0, npm-package-arg@6.0.0, npm-registry-client@8.5.1,'
+      + ' npm-pick-manifest@2.1.0, pacote@7.6.1, read-installed@4.0.3, package-json@4.0.1, semver-diff@2.1.0',
+      '\n4 versions of yargs:\n - \u001b[44m10.0.3\u001b[49m from nyc@11.4.1\n - \u001b[44m11.0.0\u001b[49m from'
+      + ' libnpx@10.0.1\n - \u001b[44m3.10.0\u001b[49m from uglify-js@2.8.29\n - \u001b[44m3.32.0\u001b[49m from tacks@1.2.6',
+      '',
+    ];
     assert.deepEqual(res, expected);
   });
 });
