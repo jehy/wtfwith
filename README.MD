@@ -39,6 +39,6 @@ Not required. Or run `npm i -g wtfwith` if you really want.
 
 ## Changelog
 
-* `1.1.1` some more tests and decomposition
-* `1.1.0` added support for `npm-shrinkwrap.json`
-* `1.0.20` many small fixes
+* `1.1.1`, `1.1.2`: some more tests and decomposition
+* `1.1.0`: added support for `npm-shrinkwrap.json`
+* `1.0.20`: many small fixes
