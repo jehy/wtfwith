@@ -3,10 +3,10 @@
 /* eslint-disable no-console */
 
 const colors = require('colors/safe');
-const advices = require('./advices');
 const crypto = require('crypto');
 const semver = require('semver');
 const debug = require('debug')('wtfwith');
+const advices = require('./advices');
 
 const rootPackageName = 'root';
 const minSearchDefault = 3;

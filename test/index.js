@@ -3,8 +3,8 @@
 /* eslint-disable global-require */
 /* eslint-disable import/no-extraneous-dependencies */
 
-const funcs = require('../lib');
 const {assert} = require('chai');
+const funcs = require('../lib');
 
 describe('Test with npm package file', () => {
 
