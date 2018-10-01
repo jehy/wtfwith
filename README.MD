@@ -7,7 +7,7 @@
 
 `wtfwith` is a module we were all waiting for!
 
-It checks your `package-lock.json` for repeated dependencies with different versions.
+It checks your `package-lock.json` or `npm-shrinkwrap.json` for repeated dependencies with different versions.
 
 ## Installation
 
@@ -17,7 +17,7 @@ Not required. Or run `npm i -g wtfwith` if you really want.
 
 1)Change to your project directory: `cd /your/project/dir`;
 
-2)Check that you have `package-lock.json` there (or `run npm i`);
+2)Check that you have `package-lock.json` or `npm-shrinkwrap.json` there (or `run npm i`);
 
 3)Run `npx wtfwith moduleName` or `npx wtfwith everything`!
 

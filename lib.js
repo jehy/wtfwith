@@ -135,8 +135,16 @@ function init(opts = {}) {
     lockFile = require(path);
   }
   catch (e) {
-    console.log(colors.red(`Failed to read package-lock file:\n${e}`));
-    process.exit(0);
+    try {
+      const path = `${process.cwd()}/npm-shrinkwrap.json`;
+      console.log(colors.yellow(`Checking path ${path}`));
+      // eslint-disable-next-line global-require,import/no-dynamic-require
+      lockFile = require(path);
+    }
+    catch (err) {
+      console.log(colors.red(`Failed to read package-lock file:\n${e}`));
+      process.exit(0);
+    }
   }
 
   const deps = {};
