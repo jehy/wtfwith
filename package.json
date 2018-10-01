@@ -1,6 +1,6 @@
 {
   "name": "wtfwith",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Check your lock file for repeated dependencies with different versions",
   "keywords": [
     "npx",
@@ -10,7 +10,7 @@
   "scripts": {
     "test": "mocha --exit",
     "cover": "nyc mocha -t 10000 --exit",
-    "check_coverage": "nyc check-coverage --lines 70 --functions 70 --branches 70",
+    "check_coverage": "nyc check-coverage --lines 90 --functions 90 --branches 90",
     "coverage": "nyc npm test",
     "coveralls": "nyc report --reporter=text-lcov | coveralls",
     "lint": "./node_modules/.bin/eslint index.js lib.js test"

@@ -92,7 +92,7 @@ function getUniqueDeps(all, deps, options) {
   }, {});
 }
 
-function showAdvice(worst, good = true) {
+function getAdvice(worst, good = true) {
   const currAdvices = good && advices.good || advices.bad;
   const randHex = crypto.randomBytes(4)
     .toString('hex');
@@ -104,7 +104,13 @@ function showAdvice(worst, good = true) {
   else {
     advice = advice.replace('XXX', 'deps');
   }
-  console.log(colors.magenta(`Advice: ${advice}`));
+  return advice;
+}
+
+
+/* istanbul ignore next */
+function showAdvice(worst, good = true) {
+  console.log(colors.magenta(`Advice: ${getAdvice(worst, good)}`));
 }
 
 /* istanbul ignore next */
@@ -181,7 +187,8 @@ function processData(lockFile, deps, options) {
   return {worst, unique};
 }
 
-function printModulesInfo(modules, unique) {
+function getModulesInfo(modules, unique) {
+  const res = [];
   modules
     .forEach((itemName) => {
       const item = unique[itemName];
@@ -203,9 +210,16 @@ function printModulesInfo(modules, unique) {
           return colors.bgBlue(version);
         }))
         .join('\n - ')}`;
-      console.log(`\n${item.versions.length} versions of ${itemName}:\n - ${versions}`);
+      res.push(`\n${item.versions.length} versions of ${itemName}:\n - ${versions}`);
     });
-  console.log('');
+  res.push('');
+  return res;
+}
+
+
+/* istanbul ignore next */
+function printModulesInfo(modules, unique) {
+  console.log(getModulesInfo(modules, unique).join('\n'));
 }
 
 /* istanbul ignore next */
@@ -224,5 +238,9 @@ function output(modules, unique, options) {
 }
 
 module.exports = {
-  init, processData, output,
+  init,
+  processData,
+  output,
+  getAdvice,
+  getModulesInfo,
 };
