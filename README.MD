@@ -1,5 +1,6 @@
 # WTF WITH
-
+[![npm](https://img.shields.io/npm/v/wtfwith.svg)](https://npm.im/wtfwith)
+[![license](https://img.shields.io/npm/l/wtfwith.svg)](https://npm.im/wtfwith)
 [![Build Status](https://travis-ci.org/jehy/wtfwith.svg?branch=master)](https://travis-ci.org/jehy/wtfwith)
 [![dependencies Status](https://david-dm.org/jehy/wtfwith/status.svg)](https://david-dm.org/jehy/wtfwith)
 [![devDependencies Status](https://david-dm.org/jehy/wtfwith/dev-status.svg)](https://david-dm.org/jehy/wtfwith?type=dev)
