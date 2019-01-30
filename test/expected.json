@@ -1,0 +1,540 @@
+[
+  {
+    "itemName": "lodash",
+    "item": {
+      "count": 1,
+      "versions": [
+        "4.17.10",
+        "4.17.11",
+        "lodash._baseindexof:3.1.0",
+        "lodash._baseuniq:4.6.0",
+        "lodash._bindcallback:3.0.1",
+        "lodash._cacheindexof:3.0.2",
+        "lodash._createcache:3.1.2",
+        "lodash._createset:4.0.3",
+        "lodash._getnative:3.9.1",
+        "lodash._root:3.0.1",
+        "lodash.clonedeep:4.5.0",
+        "lodash.isempty:4.4.0",
+        "lodash.restparam:3.6.1",
+        "lodash.union:4.6.0",
+        "lodash.uniq:4.5.0",
+        "lodash.without:4.4.0"
+      ],
+      "parents": {
+        "4.17.11": [
+          "eslint@4.18.2",
+          "eslint-plugin-import@2.9.0",
+          "inquirer@3.3.0",
+          "table@4.0.2"
+        ],
+        "lodash._baseindexof:3.1.0": [
+          "root"
+        ],
+        "lodash._baseuniq:4.6.0": [
+          "root"
+        ],
+        "lodash._bindcallback:3.0.1": [
+          "root"
+        ],
+        "lodash._cacheindexof:3.0.2": [
+          "root"
+        ],
+        "lodash._createcache:3.1.2": [
+          "root"
+        ],
+        "lodash._createset:4.0.3": [
+          "lodash._baseuniq@4.6.0"
+        ],
+        "lodash._getnative:3.9.1": [
+          "root",
+          "lodash._createcache@3.1.2"
+        ],
+        "lodash._root:3.0.1": [
+          "lodash._baseuniq@4.6.0"
+        ],
+        "lodash.clonedeep:4.5.0": [
+          "root",
+          "libnpmpublish@1.1.1"
+        ],
+        "lodash.isempty:4.4.0": [
+          "nano@8.0.0"
+        ],
+        "lodash.restparam:3.6.1": [
+          "root"
+        ],
+        "lodash.union:4.6.0": [
+          "root"
+        ],
+        "lodash.uniq:4.5.0": [
+          "root"
+        ],
+        "lodash.without:4.4.0": [
+          "root"
+        ],
+        "4.17.10": [
+          "nyc@11.9.0",
+          "babel-generator@6.26.1",
+          "babel-template@6.26.0",
+          "babel-traverse@6.26.0",
+          "babel-types@6.26.0"
+        ]
+      }
+    },
+    "versions": [
+      {
+        "version": "4.17.10",
+        "parents": [
+          {
+            "parentName": "nyc@11.9.0"
+          },
+          {
+            "parentName": "babel-generator@6.26.1"
+          },
+          {
+            "parentName": "babel-template@6.26.0"
+          },
+          {
+            "parentName": "babel-traverse@6.26.0"
+          },
+          {
+            "parentName": "babel-types@6.26.0"
+          }
+        ]
+      },
+      {
+        "version": "4.17.11",
+        "parents": [
+          {
+            "parentName": "eslint@4.18.2"
+          },
+          {
+            "parentName": "eslint-plugin-import@2.9.0"
+          },
+          {
+            "parentName": "inquirer@3.3.0"
+          },
+          {
+            "parentName": "table@4.0.2"
+          }
+        ]
+      },
+      {
+        "version": "lodash._baseindexof:3.1.0",
+        "parents": [
+          {
+            "parentName": "root",
+            "isRoot": true
+          }
+        ]
+      },
+      {
+        "version": "lodash._baseuniq:4.6.0",
+        "parents": [
+          {
+            "parentName": "root",
+            "isRoot": true
+          }
+        ]
+      },
+      {
+        "version": "lodash._bindcallback:3.0.1",
+        "parents": [
+          {
+            "parentName": "root",
+            "isRoot": true
+          }
+        ]
+      },
+      {
+        "version": "lodash._cacheindexof:3.0.2",
+        "parents": [
+          {
+            "parentName": "root",
+            "isRoot": true
+          }
+        ]
+      },
+      {
+        "version": "lodash._createcache:3.1.2",
+        "parents": [
+          {
+            "parentName": "root",
+            "isRoot": true
+          }
+        ]
+      },
+      {
+        "version": "lodash._createset:4.0.3",
+        "parents": [
+          {
+            "parentName": "lodash._baseuniq@4.6.0"
+          }
+        ]
+      },
+      {
+        "version": "lodash._getnative:3.9.1",
+        "parents": [
+          {
+            "parentName": "root",
+            "isRoot": true
+          },
+          {
+            "parentName": "lodash._createcache@3.1.2"
+          }
+        ]
+      },
+      {
+        "version": "lodash._root:3.0.1",
+        "parents": [
+          {
+            "parentName": "lodash._baseuniq@4.6.0"
+          }
+        ]
+      },
+      {
+        "version": "lodash.clonedeep:4.5.0",
+        "parents": [
+          {
+            "parentName": "root",
+            "isRoot": true
+          },
+          {
+            "parentName": "libnpmpublish@1.1.1"
+          }
+        ]
+      },
+      {
+        "version": "lodash.isempty:4.4.0",
+        "parents": [
+          {
+            "parentName": "nano@8.0.0"
+          }
+        ]
+      },
+      {
+        "version": "lodash.restparam:3.6.1",
+        "parents": [
+          {
+            "parentName": "root",
+            "isRoot": true
+          }
+        ]
+      },
+      {
+        "version": "lodash.union:4.6.0",
+        "parents": [
+          {
+            "parentName": "root",
+            "isRoot": true
+          }
+        ]
+      },
+      {
+        "version": "lodash.uniq:4.5.0",
+        "parents": [
+          {
+            "parentName": "root",
+            "isRoot": true
+          }
+        ]
+      },
+      {
+        "version": "lodash.without:4.4.0",
+        "parents": [
+          {
+            "parentName": "root",
+            "isRoot": true
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "itemName": "semver",
+    "item": {
+      "count": 1,
+      "versions": [
+        "4.3.6",
+        "5.3.0",
+        "5.5.0",
+        "5.6.0"
+      ],
+      "parents": {
+        "5.6.0": [
+          "root",
+          "eslint@4.18.2",
+          "eslint-plugin-node@6.0.1",
+          "init-package-json@1.10.3",
+          "libnpmpublish@1.1.1",
+          "licensee@5.0.0",
+          "lock-verify@2.0.2",
+          "normalize-package-data@2.4.0",
+          "npm-install-checks@3.0.0",
+          "npm-package-arg@6.1.0",
+          "npm-pick-manifest@2.2.3",
+          "package-json@4.0.1",
+          "pacote@9.4.0",
+          "read-installed@4.0.3",
+          "semver-diff@2.1.0"
+        ],
+        "5.3.0": [
+          "node-gyp@3.8.0",
+          "node-gyp@3.8.0"
+        ],
+        "4.3.6": [
+          "npm-registry-couchapp@2.7.1",
+          "npm-registry-couchapp@2.7.1"
+        ],
+        "5.5.0": [
+          "nyc@11.9.0",
+          "istanbul-lib-instrument@1.10.1",
+          "normalize-package-data@2.4.0"
+        ]
+      }
+    },
+    "versions": [
+      {
+        "version": "4.3.6",
+        "parents": [
+          {
+            "parentName": "npm-registry-couchapp@2.7.1"
+          }
+        ]
+      },
+      {
+        "version": "5.3.0",
+        "parents": [
+          {
+            "parentName": "node-gyp@3.8.0"
+          }
+        ]
+      },
+      {
+        "version": "5.5.0",
+        "parents": [
+          {
+            "parentName": "nyc@11.9.0"
+          },
+          {
+            "parentName": "istanbul-lib-instrument@1.10.1"
+          },
+          {
+            "parentName": "normalize-package-data@2.4.0"
+          }
+        ]
+      },
+      {
+        "version": "5.6.0",
+        "parents": [
+          {
+            "parentName": "root",
+            "isRoot": true
+          },
+          {
+            "parentName": "eslint@4.18.2"
+          },
+          {
+            "parentName": "eslint-plugin-node@6.0.1"
+          },
+          {
+            "parentName": "init-package-json@1.10.3"
+          },
+          {
+            "parentName": "libnpmpublish@1.1.1"
+          },
+          {
+            "parentName": "licensee@5.0.0"
+          },
+          {
+            "parentName": "lock-verify@2.0.2"
+          },
+          {
+            "parentName": "normalize-package-data@2.4.0"
+          },
+          {
+            "parentName": "npm-install-checks@3.0.0"
+          },
+          {
+            "parentName": "npm-package-arg@6.1.0"
+          },
+          {
+            "parentName": "npm-pick-manifest@2.2.3"
+          },
+          {
+            "parentName": "package-json@4.0.1"
+          },
+          {
+            "parentName": "pacote@9.4.0"
+          },
+          {
+            "parentName": "read-installed@4.0.3"
+          },
+          {
+            "parentName": "semver-diff@2.1.0"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "itemName": "kind-of",
+    "item": {
+      "count": 1,
+      "versions": [
+        "3.2.2",
+        "4.0.0",
+        "5.1.0",
+        "6.0.2"
+      ],
+      "parents": {
+        "3.2.2": [
+          "nyc@11.9.0",
+          "align-text@0.1.4",
+          "is-number@3.0.0",
+          "is-number@3.0.0",
+          "is-accessor-descriptor@0.1.6",
+          "is-data-descriptor@0.1.4",
+          "is-number@3.0.0",
+          "object-copy@0.1.0",
+          "snapdragon-util@3.0.1",
+          "is-accessor-descriptor@0.1.6",
+          "is-accessor-descriptor@0.1.6",
+          "is-data-descriptor@0.1.4",
+          "is-data-descriptor@0.1.4",
+          "is-number@3.0.0",
+          "is-number@3.0.0",
+          "to-object-path@0.3.0",
+          "is-number@3.0.0"
+        ],
+        "6.0.2": [
+          "base@0.11.2",
+          "is-accessor-descriptor@1.0.0",
+          "is-data-descriptor@1.0.0",
+          "is-descriptor@1.0.2",
+          "define-property@2.0.2",
+          "is-accessor-descriptor@1.0.0",
+          "is-data-descriptor@1.0.0",
+          "is-descriptor@1.0.2",
+          "extglob@2.0.4",
+          "is-accessor-descriptor@1.0.0",
+          "is-data-descriptor@1.0.0",
+          "is-descriptor@1.0.2",
+          "micromatch@3.1.10",
+          "micromatch@3.1.10",
+          "nanomatch@1.2.9",
+          "nanomatch@1.2.9",
+          "snapdragon-node@2.1.1",
+          "is-accessor-descriptor@1.0.0",
+          "is-data-descriptor@1.0.0",
+          "is-descriptor@1.0.2",
+          "test-exclude@4.2.1",
+          "is-accessor-descriptor@1.0.0",
+          "is-data-descriptor@1.0.0",
+          "is-descriptor@1.0.2",
+          "micromatch@3.1.10",
+          "use@3.1.0",
+          "use@3.1.0"
+        ],
+        "4.0.0": [
+          "has-values@1.0.0",
+          "has-values@1.0.0"
+        ],
+        "5.1.0": [
+          "is-descriptor@0.1.6",
+          "is-descriptor@0.1.6",
+          "expand-brackets@2.1.4",
+          "is-descriptor@0.1.6"
+        ]
+      }
+    },
+    "versions": [
+      {
+        "version": "3.2.2",
+        "parents": [
+          {
+            "parentName": "nyc@11.9.0"
+          },
+          {
+            "parentName": "align-text@0.1.4"
+          },
+          {
+            "parentName": "is-number@3.0.0"
+          },
+          {
+            "parentName": "is-accessor-descriptor@0.1.6"
+          },
+          {
+            "parentName": "is-data-descriptor@0.1.4"
+          },
+          {
+            "parentName": "object-copy@0.1.0"
+          },
+          {
+            "parentName": "snapdragon-util@3.0.1"
+          },
+          {
+            "parentName": "to-object-path@0.3.0"
+          }
+        ]
+      },
+      {
+        "version": "4.0.0",
+        "parents": [
+          {
+            "parentName": "has-values@1.0.0"
+          }
+        ]
+      },
+      {
+        "version": "5.1.0",
+        "parents": [
+          {
+            "parentName": "is-descriptor@0.1.6"
+          },
+          {
+            "parentName": "expand-brackets@2.1.4"
+          }
+        ]
+      },
+      {
+        "version": "6.0.2",
+        "parents": [
+          {
+            "parentName": "base@0.11.2"
+          },
+          {
+            "parentName": "is-accessor-descriptor@1.0.0"
+          },
+          {
+            "parentName": "is-data-descriptor@1.0.0"
+          },
+          {
+            "parentName": "is-descriptor@1.0.2"
+          },
+          {
+            "parentName": "define-property@2.0.2"
+          },
+          {
+            "parentName": "extglob@2.0.4"
+          },
+          {
+            "parentName": "micromatch@3.1.10"
+          },
+          {
+            "parentName": "nanomatch@1.2.9"
+          },
+          {
+            "parentName": "snapdragon-node@2.1.1"
+          },
+          {
+            "parentName": "test-exclude@4.2.1"
+          },
+          {
+            "parentName": "use@3.1.0"
+          }
+        ]
+      }
+    ]
+  }
+]

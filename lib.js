@@ -187,39 +187,49 @@ function processData(lockFile, deps, options) {
   return {worst, unique};
 }
 
-function getModulesInfo(worst, unique) {
-  const res = [];
-  worst
-    .forEach((itemName) => {
-      const item = unique[itemName];
-      const versions = `${item.versions
-        .sort()
-        .map(((version) => {
-          if (unique[itemName].parents && unique[itemName].parents[version]) {
-            const parents = unique[itemName].parents[version]
-              .filter((value, index, self) => self.indexOf(value) === index)
-              .map((parentName) => {
-                if (parentName === rootPackageName) {
-                  return colors.green(parentName);
-                }
-                return parentName;
-              })
-              .join(', ');
-            return `${colors.bgBlue(version)} from ${parents}`;
-          }
-          return colors.bgBlue(version);
-        }))
-        .join('\n - ')}`;
-      res.push(`\n${item.versions.length} versions of ${itemName}:\n - ${versions}`);
-    });
-  res.push('');
-  return res;
+function getModulesInfoInner(worst, unique) {
+  return worst.map((itemName) => {
+    const item = unique[itemName];
+    const versions = item.versions
+      .sort()
+      .map(((version) => {
+        if (unique[itemName].parents && unique[itemName].parents[version]) {
+          const parents = unique[itemName].parents[version]
+            .filter((value, index, self) => self.indexOf(value) === index)
+            .map((parentName) => {
+              if (parentName === rootPackageName) {
+                return {parentName, isRoot: true};
+              }
+              return {parentName};
+            });
+          return {version, parents};
+        }
+        return {version};
+      }));
+    return {itemName, item, versions};
+  });
 }
 
 
 /* istanbul ignore next */
 function printModulesInfo(worst, unique) {
-  console.log(getModulesInfo(worst, unique).join('\n'));
+  const data = getModulesInfoInner(worst, unique);
+  const toLog = data.map(({itemName, item, versions})=>{
+    const versionsPrintable = versions.map((versionData)=>{
+      const {version, parents} = versionData;
+      const parentsPrintable = parents.map((parent)=>{
+        const {parentName, isRoot} = parent;
+        if (isRoot)
+        {
+          return colors.green(parentName);
+        }
+        return parentName;
+      });
+      return `${colors.bgBlue(version)} from ${parentsPrintable.join(', ')}`;
+    });
+    return (`\n${item.versions.length} versions of ${itemName}:\n - ${versionsPrintable.join('\n - ')}`);
+  });
+  console.log(toLog.concat('').join('\n'));
 }
 
 /* istanbul ignore next */
@@ -242,5 +252,6 @@ module.exports = {
   processData,
   output,
   getAdvice,
-  getModulesInfo,
+  getModulesInfoInner,
+  printModulesInfo,
 };
