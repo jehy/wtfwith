@@ -6,12 +6,13 @@ const colors = require('colors/safe');
 const crypto = require('crypto');
 const semver = require('semver');
 const debug = require('debug')('wtfwith');
+const {checkExactVersion} = require('check-exact');
 const advices = require('./advices');
 
 const rootPackageName = 'root';
 const minSearchDefault = 3;
 
-// detect packages which are broken to damn pieces
+/* detect packages which are broken to damn pieces
 function getBaseName(pkg) {
   const baseNames = ['lodash', 'underscore'];
   const baseName = baseNames.find(item => pkg.includes(item));
@@ -19,26 +20,11 @@ function getBaseName(pkg) {
     return baseName;
   }
   return false;
-}
+} */
 
-function getDeps(obj, parent, options) {
-  const deps = obj.dependencies;
-  if (!deps || !Object.keys(deps).length) {
-    return [];
-  }
-  const directDeps = Object.keys(deps);
-  const directDepsItems = directDeps.map((item) => {
-    return {name: item, version: deps[item].version, parent, dev: deps[item].dev};
-  });
-  const childDeps = directDeps.map((item) => {
-    const parentData = {name: item, version: deps[item].version, dev: deps[item].dev};
-    // eslint-disable-next-line no-use-before-define
-    return getAll(deps[item], parentData, options);
-  })
-    .reduce((res, item) => {
-      return res.concat(item);
-    }, []);
-  return directDepsItems.concat(childDeps);
+function clean(version)
+{
+  return semver.clean(version) || version; // semver.clean returns null on non-cleanable, so...
 }
 
 function getRequires(obj, parent, options) {
@@ -51,12 +37,22 @@ function getRequires(obj, parent, options) {
   }
   return Object.keys(deps)
     .map((item) => {
-      return {name: item, version: deps[item], parent, dev: parent.dev};
+      return {name: item, version: clean(deps[item]), parent, dev: parent.dev};
     });
 }
 
-function getAll(obj, parent, options) {
-  return getDeps(obj, parent, options).concat(getRequires(obj, parent, options));
+function getDeps(obj, parent, options) {
+  const deps = obj.dependencies;
+  const requires = getRequires(obj, parent, options);
+  if (!deps || !Object.keys(deps).length) {
+    return requires;
+  }
+  const directDepsItems = Object.keys(deps).reduce((res, item) => {
+    const direct = {name: item, version: clean(deps[item].version), parent, dev: deps[item].dev};
+    const child = getDeps(deps[item], direct, options);
+    return res.concat([direct]).concat(child);
+  }, []);
+  return directDepsItems.concat(requires);
 }
 
 function getUniqueDeps(all, deps, options) {
@@ -65,29 +61,43 @@ function getUniqueDeps(all, deps, options) {
     if (!options.showDev && item.dev) { // filter out dev deps
       return res;
     }
-    const searchName = getBaseName(item.name) || item.name;
+    // const searchName = getBaseName(item.name) || item.name; TODO fix getBaseName
+    const searchName = item.name; // replace with upper
     const version = (searchName === item.name && item.version || `${item.name}:${item.version}`);
+    const isInstalledVersion = checkExactVersion(searchName, version, {log: [], result: true}).result;
     if (!res[searchName]) {
-      res[searchName] = {count: 1, versions: [version]};
+      res[searchName] = {installedVersions: [], requestedVersions: []};
     }
-    else if (!res[searchName].versions.includes(version)) {
-      res[searchName].versions.push(version);
+
+    if (isInstalledVersion && !res[searchName].installedVersions.includes(version))
+    {
+      res[searchName].installedVersions.push(version);
+    }
+    if (!res[searchName].requestedVersions.includes(version))
+    {
+      res[searchName].requestedVersions.push(version);
     }
     res[searchName].parents = res[searchName].parents || {};
     res[searchName].parents[version] = res[searchName].parents[version] || [];
-    if (item.parent.name === rootPackageName) {
-      const isDirect = deps.direct[item.name] && semver.satisfies(item.version, deps.direct[item.name]);
-      const isBundle = deps.bundle.includes(item.name);
-      const isDev = deps.dev[item.name] && semver.satisfies(item.version, deps.dev[item.name]);
-      if (!isBundle && !isDirect && !(options.showDev && isDev)) {
-        return res;
-      }
-      res[searchName].parents[version].push(`${item.parent.name}`);
-    }
-    else {
+    if (item.parent.name !== rootPackageName) {
       res[searchName].parents[version].push(`${item.parent.name}@${item.parent.version}`);
+      return res;
     }
-
+    const isDirect = deps.direct[item.name] && semver.satisfies(item.version, deps.direct[item.name]);
+    const isBundle = deps.bundle.includes(item.name);
+    const isDev = deps.dev[item.name] && semver.satisfies(item.version, deps.dev[item.name]);
+    if (isDirect || isBundle || isDev)
+    {
+      res[searchName].parents[version].push(rootPackageName);
+      return res;
+    }
+    // it is some dependency's dependency and not root,
+    const realParent = all.find(item2=>item !== item2 && item2.name === item.name && semver.satisfies(item.version, item2.version));
+    if (!realParent || !realParent.parent) {
+      /* istanbul ignore next */
+      throw new Error(`Not found parent for ${JSON.stringify(item)}`);
+    }
+    res[searchName].parents[version].push(`${realParent.parent.name}@${realParent.parent.version}`);
     return res;
   }, {});
 }
@@ -172,14 +182,16 @@ function init(opts = {}) {
 }
 
 function processData(lockFile, deps, options) {
-  const all = getAll(lockFile, {name: rootPackageName}, options);
+  const all = getDeps(lockFile, {name: rootPackageName}, options);
   const unique = getUniqueDeps(all, deps, options);
+  // console.log(JSON.stringify(unique));
+  // process.exit(0);
   if (!options.minSearch) {
     options.minSearch = minSearchDefault;
   }
   let worst = Object.keys(unique)
-    .filter(item => unique[item].versions.length >= options.minSearch)
-    .sort((a, b) => unique[b].versions.length - unique[a].versions.length);
+    .filter(item => unique[item].installedVersions.length >= options.minSearch)
+    .sort((a, b) => unique[b].installedVersions.length - unique[a].installedVersions.length);
   if (options.arg !== 'everything') {
     worst = worst
       .filter(itemName => itemName.includes(options.arg));
@@ -190,9 +202,10 @@ function processData(lockFile, deps, options) {
 function getModulesInfoInner(worst, unique) {
   return worst.map((itemName) => {
     const item = unique[itemName];
-    const versions = item.versions
+    const versions = item.installedVersions
       .sort()
       .map(((version) => {
+        // console.log(`${itemName}@${version} exact ${exact}`);
         if (unique[itemName].parents && unique[itemName].parents[version]) {
           const parents = unique[itemName].parents[version]
             .filter((value, index, self) => self.indexOf(value) === index)
@@ -204,9 +217,16 @@ function getModulesInfoInner(worst, unique) {
             });
           return {version, parents};
         }
-        return {version};
+        /* istanbul ignore next */
+        throw new Error(`No parents! Item: ${JSON.stringify(unique[itemName])}`);
+        // return {version};
       }));
-    return {itemName, item, versions};
+    const versionsWithRequested = versions.map((res, itemVersion)=>{
+      const addRequested = item.requestedVersions.filter(range=>semver.satisfies(itemVersion.version, range));
+      addRequested.forEach((add)=>{ itemVersion.parents = itemVersion.parents.concat(add.parents); });
+      return res;
+    });
+    return {itemName, item, versions: versionsWithRequested};
   });
 }
 
@@ -227,7 +247,7 @@ function printModulesInfo(worst, unique) {
       });
       return `${colors.bgBlue(version)} from ${parentsPrintable.join(', ')}`;
     });
-    return (`\n${item.versions.length} versions of ${itemName}:\n - ${versionsPrintable.join('\n - ')}`);
+    return (`\n${item.installedVersions.length} versions of ${itemName}:\n - ${versionsPrintable.join('\n - ')}`);
   });
   console.log(toLog.concat('').join('\n'));
 }

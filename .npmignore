@@ -8,3 +8,7 @@ tty.gif
 test
 .nyc_output
 .travis.yml
+.eslintrc.json
+.gitignore
+package-lock.json
+tty.gif
