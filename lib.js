@@ -4,10 +4,10 @@
 
 const colors = require('colors/safe');
 const crypto = require('crypto');
-const semver = require('semver');
 const debug = require('debug')('wtfwith');
 const {checkExactVersion} = require('check-exact');
 const advices = require('./advices');
+const semverCustom = require('./semverCustom');
 
 const rootPackageName = 'root';
 const minSearchDefault = 3;
@@ -22,10 +22,6 @@ function getBaseName(pkg) {
   return false;
 } */
 
-function clean(version)
-{
-  return semver.clean(version) || version; // semver.clean returns null on non-cleanable, so...
-}
 
 function getRequires(obj, parent, options) {
   if (obj.dev && !options.showDev) {
@@ -37,7 +33,7 @@ function getRequires(obj, parent, options) {
   }
   return Object.keys(deps)
     .map((item) => {
-      return {name: item, version: clean(deps[item]), parent, dev: parent.dev};
+      return {name: item, version: semverCustom.clean(deps[item]), parent, dev: parent.dev};
     });
 }
 
@@ -48,7 +44,7 @@ function getDeps(obj, parent, options) {
     return requires;
   }
   const directDepsItems = Object.keys(deps).reduce((res, item) => {
-    const direct = {name: item, version: clean(deps[item].version), parent, dev: deps[item].dev};
+    const direct = {name: item, version: semverCustom.clean(deps[item].version), parent, dev: deps[item].dev};
     const child = getDeps(deps[item], direct, options);
     return res.concat([direct]).concat(child);
   }, []);
@@ -83,16 +79,17 @@ function getUniqueDeps(all, deps, options) {
       res[searchName].parents[version].push(`${item.parent.name}@${item.parent.version}`);
       return res;
     }
-    const isDirect = deps.direct[item.name] && semver.satisfies(item.version, deps.direct[item.name]);
+    const isDirect = deps.direct[item.name] && semverCustom.satisfies(item.version, deps.direct[item.name]);
     const isBundle = deps.bundle.includes(item.name);
-    const isDev = deps.dev[item.name] && semver.satisfies(item.version, deps.dev[item.name]);
+    const isDev = deps.dev[item.name] && semverCustom.satisfies(item.version, deps.dev[item.name]);
+
     if (isDirect || isBundle || isDev)
     {
       res[searchName].parents[version].push(rootPackageName);
       return res;
     }
     // it is some dependency's dependency and not root,
-    const realParent = all.find(item2=>item !== item2 && item2.name === item.name && semver.satisfies(item.version, item2.version));
+    const realParent = all.find(item2=>item !== item2 && item2.name === item.name && semverCustom.satisfies(item.version, item2.version));
     if (!realParent || !realParent.parent) {
       /* istanbul ignore next */
       throw new Error(`Not found parent for ${JSON.stringify(item)}`);
@@ -222,7 +219,7 @@ function getModulesInfoInner(worst, unique) {
         // return {version};
       }));
     const versionsWithRequested = versions.map((res, itemVersion)=>{
-      const addRequested = item.requestedVersions.filter(range=>semver.satisfies(itemVersion.version, range));
+      const addRequested = item.requestedVersions.filter(range=>semverCustom.satisfies(itemVersion.version, range));
       addRequested.forEach((add)=>{ itemVersion.parents = itemVersion.parents.concat(add.parents); });
       return res;
     });

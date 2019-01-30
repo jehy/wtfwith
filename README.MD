@@ -40,6 +40,8 @@ Not required. Or run `npm i -g wtfwith` if you really want.
 
 ## Changelog
 
+* `2.0.1` some fixes for broken semver and hardcore package locks
+* `2.0.0` support for new npm lock format with loose deps
 * `1.1.1`, `1.1.2`: some more tests and decomposition
 * `1.1.0`: added support for `npm-shrinkwrap.json`
 * `1.0.20`: many small fixes
