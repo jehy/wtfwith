@@ -5,7 +5,6 @@
 const program = require('commander');
 const {init, processData, output} = require('./lib.js');
 
-let moduleArg;
 program
   .usage('[moduleName] [options]')
   .version(require('./package.json').version)
@@ -13,6 +12,6 @@ program
   .option('-m, --min [min]', 'min deps for warning')
   .parse(process.argv);
 
-const {lockFile, deps, options} = init(Object.assign(program, moduleArg));
-const {worst, unique} = processData(lockFile, deps, options);
+const {lockData, packageData, options} = init(program);
+const {worst, unique} = processData(lockData, packageData, options);
 output(worst, unique, options);

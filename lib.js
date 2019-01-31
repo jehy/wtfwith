@@ -7,7 +7,7 @@ const crypto = require('crypto');
 const debug = require('debug')('wtfwith');
 const {checkExactVersion} = require('check-exact');
 const advices = require('./advices');
-const semverCustom = require('./semverCustom');
+const semver = require('./semverCustom');
 
 const rootPackageName = 'root';
 const minSearchDefault = 3;
@@ -23,17 +23,14 @@ function getBaseName(pkg) {
 } */
 
 
-function getRequires(obj, parent, options) {
-  if (obj.dev && !options.showDev) {
-    return [];
-  }
+function getRequires(obj, parent) {
   const deps = obj.requires;
   if (!deps || !Object.keys(deps).length) {
     return [];
   }
   return Object.keys(deps)
     .map((item) => {
-      return {name: item, version: semverCustom.clean(deps[item]), parent, dev: parent.dev};
+      return {name: item, version: semver.clean(deps[item]), parent, dev: parent.dev};
     });
 }
 
@@ -44,19 +41,18 @@ function getDeps(obj, parent, options) {
     return requires;
   }
   const directDepsItems = Object.keys(deps).reduce((res, item) => {
-    const direct = {name: item, version: semverCustom.clean(deps[item].version), parent, dev: deps[item].dev};
-    const child = getDeps(deps[item], direct, options);
-    return res.concat([direct]).concat(child);
+    const direct = {name: item, version: semver.clean(deps[item].version), parent, dev: deps[item].dev};
+    if (!options.showDev && direct.dev) { // filter out dev deps
+      return res;
+    }
+    const childDeps = getDeps(deps[item], direct, options);
+    return res.concat(direct).concat(childDeps);
   }, []);
   return directDepsItems.concat(requires);
 }
 
-function getUniqueDeps(all, deps, options) {
+function getUniqueDeps(all, packageData) {
   return all.reduce((res, item) => {
-
-    if (!options.showDev && item.dev) { // filter out dev deps
-      return res;
-    }
     // const searchName = getBaseName(item.name) || item.name; TODO fix getBaseName
     const searchName = item.name; // replace with upper
     const version = (searchName === item.name && item.version || `${item.name}:${item.version}`);
@@ -79,9 +75,9 @@ function getUniqueDeps(all, deps, options) {
       res[searchName].parents[version].push(`${item.parent.name}@${item.parent.version}`);
       return res;
     }
-    const isDirect = deps.direct[item.name] && semverCustom.satisfies(item.version, deps.direct[item.name]);
-    const isBundle = deps.bundle.includes(item.name);
-    const isDev = deps.dev[item.name] && semverCustom.satisfies(item.version, deps.dev[item.name]);
+    const isDirect = packageData.direct[item.name] && semver.satisfies(item.version, packageData.direct[item.name]);
+    const isBundle = packageData.bundle.includes(item.name);
+    const isDev = packageData.dev[item.name] && semver.satisfies(item.version, packageData.dev[item.name]);
 
     if (isDirect || isBundle || isDev)
     {
@@ -89,7 +85,7 @@ function getUniqueDeps(all, deps, options) {
       return res;
     }
     // it is some dependency's dependency and not root,
-    const realParent = all.find(item2=>item !== item2 && item2.name === item.name && semverCustom.satisfies(item.version, item2.version));
+    const realParent = all.find(item2=>item !== item2 && item2.name === item.name && semver.satisfies(item.version, item2.version));
     if (!realParent || !realParent.parent) {
       /* istanbul ignore next */
       throw new Error(`Not found parent for ${JSON.stringify(item)}`);
@@ -138,21 +134,21 @@ function init(opts = {}) {
   }
   else {
     arg = 'everything';
-    console.log(colors.yellow(`Searching modules which occure more then ${minSearch} times`));
+    console.log(colors.yellow(`Searching modules which occur more then ${minSearch} times`));
   }
-  let lockFile;
+  let lockData;
   try {
     const path = `${process.cwd()}/package-lock.json`;
     console.log(colors.yellow(`Checking path ${path}`));
     // eslint-disable-next-line global-require,import/no-dynamic-require
-    lockFile = require(path);
+    lockData = require(path);
   }
   catch (e) {
     try {
       const path = `${process.cwd()}/npm-shrinkwrap.json`;
       console.log(colors.yellow(`Checking path ${path}`));
       // eslint-disable-next-line global-require,import/no-dynamic-require
-      lockFile = require(path);
+      lockData = require(path);
     }
     catch (err) {
       console.log(colors.red(`Failed to read package-lock file:\n${e}`));
@@ -160,14 +156,14 @@ function init(opts = {}) {
     }
   }
 
-  const deps = {};
+  const packageData = {};
   try {
     const path = `${process.cwd()}/package.json`;
     // eslint-disable-next-line global-require,import/no-dynamic-require
-    const packageData = require(path);
-    deps.direct = packageData.dependencies || {};
-    deps.dev = packageData.devDependencies || {};
-    deps.bundle = packageData.bundleDependencies || [];
+    const data = require(path);
+    packageData.direct = data.dependencies || {};
+    packageData.dev = data.devDependencies || {};
+    packageData.bundle = data.bundleDependencies || [];
   }
   catch (e) {
     console.log(colors.red(`Failed to read package file:\n${e}`));
@@ -175,12 +171,12 @@ function init(opts = {}) {
   }
   const options = {arg, showDev, minSearch};
   debug(`Init options: ${JSON.stringify(options)}`);
-  return {lockFile, deps, options};
+  return {lockData, packageData, options};
 }
 
-function processData(lockFile, deps, options) {
-  const all = getDeps(lockFile, {name: rootPackageName}, options);
-  const unique = getUniqueDeps(all, deps, options);
+function processData(lockData, packageData, options) {
+  const all = getDeps(lockData, {name: rootPackageName}, options);
+  const unique = getUniqueDeps(all, packageData, options);
   // console.log(JSON.stringify(unique));
   // process.exit(0);
   if (!options.minSearch) {
@@ -197,6 +193,7 @@ function processData(lockFile, deps, options) {
 }
 
 function getModulesInfoInner(worst, unique) {
+  // require('fs').writeFileSync('unique.json', JSON.stringify(unique, null, 2));
   return worst.map((itemName) => {
     const item = unique[itemName];
     const versions = item.installedVersions
@@ -205,23 +202,32 @@ function getModulesInfoInner(worst, unique) {
         // console.log(`${itemName}@${version} exact ${exact}`);
         if (unique[itemName].parents && unique[itemName].parents[version]) {
           const parents = unique[itemName].parents[version]
-            .filter((value, index, self) => self.indexOf(value) === index)
-            .map((parentName) => {
-              if (parentName === rootPackageName) {
-                return {parentName, isRoot: true};
-              }
-              return {parentName};
-            });
+            .filter((value, index, self) => self.indexOf(value) === index);
           return {version, parents};
         }
         /* istanbul ignore next */
         throw new Error(`No parents! Item: ${JSON.stringify(unique[itemName])}`);
         // return {version};
       }));
-    const versionsWithRequested = versions.map((res, itemVersion)=>{
-      const addRequested = item.requestedVersions.filter(range=>semverCustom.satisfies(itemVersion.version, range));
-      addRequested.forEach((add)=>{ itemVersion.parents = itemVersion.parents.concat(add.parents); });
-      return res;
+    const versionsWithRequested = versions.map((itemVersion)=>{
+      const allCompatible = item.requestedVersions.filter(range=>semver.satisfies(itemVersion.version, range));
+      // check if this installed version is max for requested
+
+      const addRequested = allCompatible.filter((range)=>{
+        const maxCompatibe = versions.reduce((res, ver)=>{
+          const compatible = semver.satisfies(ver.version, range);
+          const isMore = semver.gt(ver.version, res);
+          if (compatible && isMore)
+          {
+            return ver.version;
+          }
+          return res;
+        }, itemVersion.version);
+        return maxCompatibe === itemVersion.version;
+      });
+      const allParents = addRequested.reduce((res, add)=>res.concat(unique[itemName].parents[add]), itemVersion.parents);
+      const uniqueParents = allParents.filter((el, index, arr)=>arr.indexOf(el) === index);
+      return Object.assign({}, itemVersion, {parents: uniqueParents});
     });
     return {itemName, item, versions: versionsWithRequested};
   });
@@ -235,8 +241,8 @@ function printModulesInfo(worst, unique) {
     const versionsPrintable = versions.map((versionData)=>{
       const {version, parents} = versionData;
       const parentsPrintable = parents.map((parent)=>{
-        const {parentName, isRoot} = parent;
-        if (isRoot)
+        const parentName = parent;
+        if (parentName === rootPackageName)
         {
           return colors.green(parentName);
         }
