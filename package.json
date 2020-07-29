@@ -34,6 +34,7 @@
     "colors": "1.4.0",
     "commander": "6.0.0",
     "debug": "4.1.1",
+    "json-stringify-safe": "5.0.1",
     "semver": "7.3.2"
   },
   "devDependencies": {

@@ -8,6 +8,7 @@ const debug = require('debug')('wtfwith');
 const {checkExactVersion} = require('check-exact');
 const advices = require('./advices');
 const semver = require('./semverCustom');
+const stringify = require('json-stringify-safe');
 
 const rootPackageName = 'root';
 const minSearchDefault = 3;
@@ -87,7 +88,7 @@ function getUniqueDeps(all, packageData) {
     const realParent = all.find(item2=>item !== item2 && item2.name === item.name && semver.satisfies(item.version, item2.version));
     if (!realParent || !realParent.parent) {
       /* istanbul ignore next */
-      throw new Error(`Not found parent for ${JSON.stringify(item)}`);
+      throw new Error(`Not found parent for ${stringify(item)}`);
     }
     res[searchName].parents[version].push(`${realParent.parent.name}@${realParent.parent.version}`);
     return res;
@@ -116,7 +117,7 @@ function showAdvice(worst, good = true) {
 
 /* istanbul ignore next */
 function init(opts = {}) {
-  debug(`commander parse result: ${JSON.stringify(opts, null, 3)}`);
+  debug(`commander parse result: ${stringify(opts, null, 3)}`);
   // debug(`commander opts events: ${JSON.stringify(opts.args)}`);
 
   let arg = opts.args[0];
@@ -168,7 +169,7 @@ function init(opts = {}) {
     process.exit(0);
   }
   const options = {arg, showDev, minSearch};
-  debug(`Init options: ${JSON.stringify(options)}`);
+  debug(`Init options: ${stringify(options)}`);
   return {lockData, packageData, options};
 }
 
@@ -204,7 +205,7 @@ function getModulesInfoInner(worst, unique) {
           return {version, parents};
         }
         /* istanbul ignore next */
-        throw new Error(`No parents! Item: ${JSON.stringify(unique[itemName])}`);
+        throw new Error(`No parents! Item: ${stringify(unique[itemName])}`);
         // return {version};
       }));
     const versionsWithRequested = versions.map(itemVersion=>{
