@@ -41,11 +41,10 @@ describe('Test with npm package file', () => {
         assert.deepEqual(worst, ['readable-stream', 'string_decoder', 'yallist']);
       });
 
-
       it('should correctly parse dev deps with no args', () => {
         const options = {arg: 'everything', showDev: true};
         const {worst} = funcs.processData(testPackageLock, deps, options);
-        assert.deepEqual(worst,
+        assert.deepEqual(worst.sort(),
           [
             'semver',
             'kind-of',
@@ -63,9 +62,8 @@ describe('Test with npm package file', () => {
             'source-map',
             'define-property',
             'wordwrap',
-          ]);
+          ].sort());
       });
-
 
       it('should correctly parse prod deps with arg string_decoder', () => {
         const options = {arg: 'string_decoder'};
@@ -73,20 +71,17 @@ describe('Test with npm package file', () => {
         assert.deepEqual(worst, ['string_decoder']);
       });
 
-
       it('should correctly parse dev deps with arg semver', () => {
         const options = {arg: 'semver', showDev: true};
         const {worst} = funcs.processData(testPackageLock, deps, options);
         assert.deepEqual(worst, ['semver']);
       });
 
-
       it('should correctly parse prod deps with arg "min"', () => {
         const options = {arg: 'everything', minSearch: 3};
         const {worst} = funcs.processData(testPackageLock, deps, options);
         assert.deepEqual(worst, ['readable-stream', 'string_decoder', 'yallist']);
       });
-
 
       it('should correctly parse dev deps with arg "min"', () => {
         const options = {arg: 'everything', showDev: true, minSearch: 4};

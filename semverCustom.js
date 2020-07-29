@@ -2,7 +2,6 @@
 
 const semver = require('semver');
 
-
 function clean(version) {
   return semver.clean(version) || version; // semver.clean returns null on non-cleanable, so...
 }

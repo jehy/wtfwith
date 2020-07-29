@@ -22,14 +22,13 @@ function getBaseName(pkg) {
   return false;
 } */
 
-
 function getRequires(obj, parent) {
   const deps = obj.requires;
   if (!deps || !Object.keys(deps).length) {
     return [];
   }
   return Object.keys(deps)
-    .map((item) => {
+    .map(item => {
       return {name: item, version: semver.clean(deps[item]), parent, dev: parent.dev};
     });
 }
@@ -109,7 +108,6 @@ function getAdvice(worst, good = true) {
   }
   return advice;
 }
-
 
 /* istanbul ignore next */
 function showAdvice(worst, good = true) {
@@ -194,11 +192,11 @@ function processData(lockData, packageData, options) {
 
 function getModulesInfoInner(worst, unique) {
   // require('fs').writeFileSync('unique.json', JSON.stringify(unique, null, 2));
-  return worst.map((itemName) => {
+  return worst.map(itemName => {
     const item = unique[itemName];
     const versions = item.installedVersions
       .sort()
-      .map(((version) => {
+      .map((version => {
         // console.log(`${itemName}@${version} exact ${exact}`);
         if (unique[itemName].parents && unique[itemName].parents[version]) {
           const parents = unique[itemName].parents[version]
@@ -209,11 +207,11 @@ function getModulesInfoInner(worst, unique) {
         throw new Error(`No parents! Item: ${JSON.stringify(unique[itemName])}`);
         // return {version};
       }));
-    const versionsWithRequested = versions.map((itemVersion)=>{
+    const versionsWithRequested = versions.map(itemVersion=>{
       const allCompatible = item.requestedVersions.filter(range=>semver.satisfies(itemVersion.version, range));
       // check if this installed version is max for requested
 
-      const addRequested = allCompatible.filter((range)=>{
+      const addRequested = allCompatible.filter(range=>{
         const maxCompatibe = versions.reduce((res, ver)=>{
           const compatible = semver.satisfies(ver.version, range);
           const isMore = semver.gt(ver.version, res);
@@ -227,20 +225,19 @@ function getModulesInfoInner(worst, unique) {
       });
       const allParents = addRequested.reduce((res, add)=>res.concat(unique[itemName].parents[add]), itemVersion.parents);
       const uniqueParents = allParents.filter((el, index, arr)=>arr.indexOf(el) === index);
-      return Object.assign({}, itemVersion, {parents: uniqueParents});
+      return { ...itemVersion, parents: uniqueParents};
     });
     return {itemName, item, versions: versionsWithRequested};
   });
 }
 
-
 /* istanbul ignore next */
 function printModulesInfo(worst, unique) {
   const data = getModulesInfoInner(worst, unique);
   const toLog = data.map(({itemName, item, versions})=>{
-    const versionsPrintable = versions.map((versionData)=>{
+    const versionsPrintable = versions.map(versionData=>{
       const {version, parents} = versionData;
-      const parentsPrintable = parents.map((parent)=>{
+      const parentsPrintable = parents.map(parent=>{
         const parentName = parent;
         if (parentName === rootPackageName)
         {
