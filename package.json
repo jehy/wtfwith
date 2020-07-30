@@ -30,12 +30,11 @@
   },
   "license": "MIT",
   "dependencies": {
-    "check-exact": "1.1.0",
     "colors": "1.4.0",
     "commander": "6.0.0",
     "debug": "4.1.1",
-    "json-stringify-safe": "5.0.1",
-    "semver": "7.3.2"
+    "glob": "7.1.6",
+    "json-stringify-safe": "5.0.1"
   },
   "devDependencies": {
     "chai": "^4.2.0",

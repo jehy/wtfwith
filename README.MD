@@ -9,17 +9,17 @@
 
 `wtfwith` is a module we were all waiting for!
 
-It checks your `package-lock.json` or `npm-shrinkwrap.json` for repeated dependencies with different versions.
+It checks your `node_modules` for repeated dependencies with different versions.
 
 ## Installation
 
-Not required. Or run `npm i -g wtfwith` if you really want.
+Not required, use `npx`. Or run `npm i -g wtfwith` if you really want.
 
 ## Usage
 
 1) Change to your project directory: `cd /your/project/dir`;
 
-2) Check that you have `package-lock.json` or `npm-shrinkwrap.json` there (or `run npm i`);
+2) Check that you have `node_modules` there (or `run npm i`);
 
 3) Run `npx wtfwith moduleName` or `npx wtfwith everything`!
 
@@ -30,7 +30,7 @@ Not required. Or run `npm i -g wtfwith` if you really want.
 * You can use any module name, or my favorite command:
 `npx wtfwith everything`!
 
-* Use `--dev` option to include dev dependencies check.
+* Use `npm prune` to check production-only deps.
 
 * Use `--min x` option to check for more then `x` duplicates of dependencies.
 
@@ -40,6 +40,7 @@ Not required. Or run `npm i -g wtfwith` if you really want.
 
 ## Changelog
 
+* `3.0.0` Analyze `node_modules` instead of lock file. Much simpler, much better.
 * `2.0.2` some fixes to show more deps
 * `2.0.1` some fixes for broken semver and hardcore package locks
 * `2.0.0` support for new npm lock format with loose deps
