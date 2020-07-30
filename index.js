@@ -3,7 +3,7 @@
 'use strict';
 
 const program = require('commander');
-const {init, processData, output} = require('./lib.js');
+const {init, processData, output, getPackageFiles} = require('./lib.js');
 
 program
   .usage('[moduleName] [options]')
@@ -12,5 +12,6 @@ program
   .parse(process.argv);
 
 const options = init(program);
-const {worst, data} = processData(options);
+const allPackageFiles = getPackageFiles();
+const {worst, data} = processData(allPackageFiles, options);
 output(worst, data, options);

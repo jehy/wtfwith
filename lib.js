@@ -58,8 +58,13 @@ function init(opts = {}) {
   return options;
 }
 
-function processData(options) {
-  const allPackageFiles = glob.sync('node_modules/**/package.json', process.cwd());
+/* istanbul ignore next */
+function getPackageFiles()
+{
+  return glob.sync('node_modules/**/package.json', process.cwd());
+}
+
+function processData(allPackageFiles, options) {
   const data = allPackageFiles.reduce((res, file)=>{
     const child = JSON.parse(fs.readFileSync(file, 'utf8'));
     let parent;
@@ -141,4 +146,5 @@ module.exports = {
   output,
   getAdvice,
   printModulesInfo,
+  getPackageFiles,
 };
